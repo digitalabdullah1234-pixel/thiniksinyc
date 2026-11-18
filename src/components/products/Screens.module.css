@@ -1,0 +1,160 @@
+/*
+ * The drawn product screens (see screens.tsx): one light app look, in the
+ * site's own green, ink and paper.
+ *
+ * `direction: ltr`: the drawings place their own text for Arabic (mirrored x,
+ * anchors swapped in screens.tsx). Left to inherit the page's rtl, SVG would
+ * swap each anchor a second time and set the Arabic words over their icons.
+ */
+.screen {
+  --m-bg: #f6f7f4;
+  --m-panel: #ffffff;
+  --m-line: #e2e6df;
+  --m-mark: #cdd5cf;
+  --m-ink: #16211c;
+  --m-mute: #7b8680;
+  --m-faint: #dfe5e0;
+  --m-acc: #10985a;
+  --m-acc-ink: #0b7c43;
+  --m-soft: #e1f2e8;
+  --m-on: #ffffff;
+  --m-on-mute: rgb(255 255 255 / 0.78);
+  --m-car: #c9d1cb;
+  --m-glass: #9aa69f;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+  direction: ltr;
+}
+
+.bg {
+  fill: var(--m-bg);
+}
+
+.panel {
+  fill: var(--m-panel);
+  stroke: var(--m-line);
+  stroke-width: 1;
+}
+
+.panelFlat {
+  fill: var(--m-panel);
+}
+
+.accPanel {
+  fill: var(--m-panel);
+  stroke: var(--m-acc);
+  stroke-width: 2;
+}
+
+.line {
+  fill: none;
+  stroke: var(--m-line);
+  stroke-width: 1;
+}
+
+.mark {
+  fill: none;
+  stroke: var(--m-mark);
+  stroke-width: 2;
+}
+
+.dash {
+  fill: none;
+  stroke: var(--m-mark);
+  stroke-width: 2;
+  stroke-dasharray: 12 12;
+}
+
+.ink {
+  fill: var(--m-ink);
+}
+
+.inkLine {
+  fill: none;
+  stroke: var(--m-ink);
+  stroke-width: 1.5;
+}
+
+.mute {
+  fill: var(--m-mute);
+}
+
+.faint {
+  fill: var(--m-faint);
+}
+
+.acc {
+  fill: var(--m-acc);
+}
+
+.accInk {
+  fill: var(--m-acc-ink);
+}
+
+.soft {
+  fill: var(--m-soft);
+}
+
+.on {
+  fill: var(--m-on);
+}
+
+.onMute {
+  fill: var(--m-on-mute);
+}
+
+.onStroke {
+  fill: none;
+  stroke: var(--m-on);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.car {
+  fill: var(--m-car);
+}
+
+.glass {
+  fill: var(--m-glass);
+}
+
+.ringTrack {
+  fill: none;
+  stroke: var(--m-faint);
+}
+
+.ringFill {
+  fill: none;
+  stroke: var(--m-acc);
+}
+
+.chev {
+  fill: none;
+  stroke: var(--m-mark);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The launch screen's two rings round the tile. */
+.halo {
+  fill: none;
+  stroke: var(--m-soft);
+  stroke-width: 1.5;
+}
+
+.t {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.h {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-weight: 700;
+}
+
+html[lang="ar"] .t,
+html[lang="ar"] .h {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+}

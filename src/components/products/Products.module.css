@@ -1,0 +1,554 @@
+/*
+ * Our products: each product a poster on the page's white. The name runs up
+ * the poster's edge, the words stand beside it at the top, and a phone leans
+ * out of the foot. One poster's layout serves every width: it is measured
+ * against the poster itself (container units), not the screen.
+ *
+ * Every movement is Framer Motion's (see Products.tsx); nothing here
+ * transitions except the arrows' colours, as in More work.
+ */
+
+.section {
+  position: relative;
+  /*
+   * White, like Our work above, and one pixel over it: at 125% or 150% display
+   * scaling a section's edge can fall between two device pixels, and the
+   * page's ground would show there as a hairline. Less room below: Process
+   * begins by fading out of this white, and the pale head of that fade is
+   * room already.
+   */
+  margin-block: -1px;
+  padding-block: calc(var(--spacing-section) + 1px) calc(var(--spacing-section) * 0.5 + 1px);
+  background: #ffffff;
+  color: var(--color-ink);
+  /* A poster lifting under the pointer never widens the page. */
+  overflow-x: clip;
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* ------------------------------------------------------------------- arrows */
+
+.arrows {
+  display: flex;
+  flex: none;
+  gap: 0.6rem;
+  padding-bottom: 0.3rem;
+}
+
+.arrows button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.875rem;
+  height: 2.875rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--color-ink);
+  transition:
+    background-color 0.25s,
+    color 0.25s,
+    border-color 0.25s,
+    opacity 0.25s;
+}
+
+.arrows button:hover:not(:disabled) {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: #ffffff;
+}
+
+.arrows button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.arrows button:focus-visible {
+  outline: 2px solid var(--color-emerald);
+  outline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------- row */
+
+/*
+ * The posters' row. By default it slides sideways: it bleeds to the screen's
+ * edges but starts in line with the page's content, and each poster snaps to
+ * that line. Where the products all fit (one always; two from a tablet up;
+ * three on a desktop) they share the page's width instead and nothing slides.
+ */
+.row {
+  --edge: calc(max(0px, (100% - var(--shell-max)) / 2) + var(--spacing-gutter));
+  --gap: clamp(0.9rem, 2.2vw, 2rem);
+  /* A poster's height, and its width while the row slides. */
+  --h: 29rem;
+  --w: min(80vw, 21.5rem);
+
+  display: flex;
+  gap: var(--gap);
+  margin: clamp(2rem, 4.4vw, 3.5rem) 0 0;
+  /* Room inside the scroller for a poster's lift above and its shadow below. */
+  padding: 0.75rem var(--edge) 3rem;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--edge);
+  scrollbar-width: none;
+}
+
+.row::-webkit-scrollbar {
+  display: none;
+}
+
+.slot {
+  flex: 0 0 auto;
+  width: var(--w);
+  height: var(--h);
+  scroll-snap-align: start;
+}
+
+/* One product: a single poster the width of the page. */
+.row[data-count="1"] {
+  overflow: visible;
+}
+
+.row[data-count="1"] .slot {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+@media (min-width: 40rem) {
+  .row {
+    --h: clamp(27rem, 46vw, 33rem);
+    --w: clamp(19rem, 42vw, 24rem);
+  }
+
+  .row[data-count="2"] {
+    overflow: visible;
+  }
+
+  .row[data-count="2"] .slot {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 64rem) {
+  .row {
+    --h: clamp(28rem, 36vw, 33rem);
+    --w: clamp(20rem, 27vw, 25.5rem);
+  }
+
+  .row[data-count="1"] {
+    --h: clamp(24rem, 30vw, 29rem);
+  }
+
+  .row[data-count="2"] {
+    --h: clamp(29rem, 40vw, 37rem);
+  }
+
+  .row[data-count="3"] {
+    overflow: visible;
+  }
+
+  .row[data-count="3"] .slot {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+}
+
+/* How far along the row is, while it slides. */
+.bar {
+  position: relative;
+  height: 2px;
+  margin-top: 0.25rem;
+  background: var(--color-hairline);
+}
+
+.bar i {
+  position: absolute;
+  inset: 0;
+  background: var(--color-emerald);
+}
+
+/* ----------------------------------------------------------------- poster */
+
+/* The poster's own size is what its insides are measured against. */
+.poster {
+  position: relative;
+  height: 100%;
+  container-type: size;
+}
+
+.face {
+  /*
+   * The name's size: a share of the poster's width, never so large that the
+   * name outruns the poster's height (--chars is its length in letters).
+   */
+  --name: min(clamp(3.4rem, 23cqw, 9.25rem), calc((var(--h) - 3.75rem) / (var(--chars) * 0.62)));
+  /* What the words at the top need, so the phone below keeps clear of them. */
+  --words: 11.75rem;
+
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: clamp(1rem, 1.6vw, 1.5rem);
+  color: #ffffff;
+  background: linear-gradient(165deg, #113a29 0%, #0a2118 44%, #06120d 100%);
+  box-shadow: 0 1.75rem 3.5rem -2rem rgb(6 18 13 / 0.6);
+}
+
+.face[data-tone="green"] {
+  background: linear-gradient(165deg, #138a50 0%, #0b6e3d 46%, #07492a 100%);
+}
+
+/* A colour picked in the admin (--tone): lighter at the top, deep at the foot, like the two made by hand. */
+.face[data-tone="custom"] {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--tone) 80%, #ffffff) 0%,
+    var(--tone) 46%,
+    color-mix(in oklab, var(--tone) 52%, #000000) 100%
+  );
+}
+
+/* A light colour: dark words, dark rings. */
+.face[data-ink="dark"] {
+  color: #0b1a12;
+}
+
+.face[data-ink="dark"] .n {
+  color: rgb(11 26 18 / 0.7);
+}
+
+.face[data-ink="dark"] .big {
+  color: rgb(11 26 18 / 0.94);
+}
+
+.face[data-ink="dark"] .desc {
+  color: rgb(11 26 18 / 0.78);
+}
+
+.face[data-ink="dark"] .cta {
+  box-shadow: inset 0 0 0 1px rgb(11 26 18 / 0.42);
+}
+
+.face[data-ink="dark"] .halo i {
+  border-color: rgb(11 26 18 / 0.14);
+}
+
+.face[data-desc] {
+  --words: 16.5rem;
+}
+
+/* Keyboard: the poster shows where the focus is. */
+.face:has(.cta:focus-visible) {
+  outline: 2px solid var(--color-emerald);
+  outline-offset: 4px;
+}
+
+.n {
+  position: absolute;
+  z-index: 2;
+  top: 1.3rem;
+  inset-inline-end: 1.45rem;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/*
+ * The name, large, running up the poster's edge. Its box is a slot the name
+ * climbs into; the room at its sides keeps that slot from trimming the
+ * letters' tails, which overhang a line this tight.
+ */
+.nameBox {
+  position: absolute;
+  z-index: 2;
+  top: 1.1rem;
+  /* Physical sides: in a vertical box, "inline-start" would mean the top. */
+  left: calc(0.6rem - var(--name) * 0.1);
+  padding: 0 calc(var(--name) * 0.14);
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .nameBox {
+  left: auto;
+  right: calc(0.6rem - var(--name) * 0.1);
+}
+
+.big {
+  display: block;
+  font-family: var(--font-space), var(--font-arabic), system-ui, sans-serif;
+  font-size: var(--name);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  color: rgb(255 255 255 / 0.96);
+}
+
+/* Tight tracking would break a connected script. */
+.big[data-script="ar"] {
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+/* The words: beside the name, under the number. */
+.copy {
+  position: absolute;
+  z-index: 2;
+  top: 3.5rem;
+  inset-inline-start: calc(var(--name) * 0.92 + 1.5rem);
+  inset-inline-end: 1.45rem;
+  display: grid;
+  justify-items: start;
+}
+
+/* The poster's edge already shows the name; this one is for screen readers. */
+.name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.tagline {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  max-width: 22rem;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: clamp(1.1rem, 0.86rem + 2.1cqw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+html[lang="ar"] .tagline {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+
+.desc {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0.55rem 0 0;
+  max-width: 24rem;
+  font-size: var(--text-fluid-sm);
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.76);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin-top: 1.05rem;
+  padding-inline: 1.15rem 0.95rem;
+  border-radius: 999px;
+  font-size: var(--text-fluid-sm);
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.38);
+}
+
+.cta:focus-visible {
+  outline: none;
+}
+
+.arrow {
+  display: inline-flex;
+}
+
+/* The arrow points along the reading direction. */
+[dir="rtl"] .arrow svg {
+  transform: scaleX(-1);
+}
+
+/* The pointer's target: the whole poster. */
+.hit {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+}
+
+/* ------------------------------------------------------------------ phone */
+
+/*
+ * The phone leans out of the foot at the far side. Its width is a share of
+ * the poster's, held back by the poster's height so it stays under the words.
+ *
+ * Every poster's phone is the same size, the one for the shorter words
+ * (11.75rem). A description makes the words reach lower: then the phone sinks
+ * further into the foot instead of shrinking (the owner, 2026-11-16: a product
+ * with a description had a visibly smaller phone than Boka and Parkio). The
+ * device is 1.98 times as tall as it is wide (3.4% padding round a 390 × 800
+ * screen); its top stays where the old, shrunken phone's top was.
+ */
+.phone {
+  --pw: min(44cqw, calc((var(--h) - 11.75rem) * 0.52));
+
+  position: absolute;
+  z-index: 1;
+  bottom: min(-8%, calc(100% - 1.98 * var(--pw) - var(--words) * 1.03 - 0.05 * var(--h)));
+  inset-inline-end: 7%;
+  width: var(--pw);
+  transform-origin: 50% 100%;
+}
+
+.stand {
+  position: relative;
+  transform-origin: 50% 100%;
+}
+
+/* Light behind the phone, and two rings round it. */
+.halo {
+  position: absolute;
+  z-index: -1;
+  top: 44%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.halo::before,
+.halo i {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.halo::before {
+  width: 96cqw;
+  background: radial-gradient(closest-side, rgb(47 208 138 / 0.3), rgb(47 208 138 / 0.09) 52%, transparent 74%);
+}
+
+.face[data-tone="green"] .halo::before {
+  background: radial-gradient(closest-side, rgb(178 255 219 / 0.4), rgb(140 245 195 / 0.12) 52%, transparent 74%);
+}
+
+.face[data-tone="custom"] .halo::before {
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.24), rgb(255 255 255 / 0.07) 52%, transparent 74%);
+}
+
+.halo i {
+  border: 1px solid rgb(255 255 255 / 0.13);
+}
+
+.halo i:first-child {
+  width: 62cqw;
+}
+
+.halo i:last-child {
+  width: 94cqw;
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+.device {
+  position: relative;
+  padding: 3.4%;
+  border-radius: 15% / 7.4%;
+  background: linear-gradient(160deg, #2a3530, #0b0f0d 42%);
+  box-shadow:
+    inset 0 0 0 1.5px rgb(255 255 255 / 0.13),
+    0 2.5rem 4.5rem -2rem rgb(0 0 0 / 0.7);
+}
+
+.screen {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 390 / 800;
+  border-radius: 12.5% / 6.1%;
+  background: #f6f7f4;
+}
+
+.island {
+  position: absolute;
+  z-index: 2;
+  top: 2.1%;
+  left: 50%;
+  width: 30%;
+  height: 3.6%;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #050807;
+}
+
+/* An uploaded screenshot fills the screen like the drawn ones do. */
+.shot {
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* ------------------------------------------------------- one product alone */
+
+/*
+ * A poster much wider than it is tall (a single product on a tablet or
+ * wider): the words stand in its middle, larger, and the phone, with nothing
+ * above it, takes the poster's height.
+ */
+@container (min-aspect-ratio: 8 / 5) {
+  .copy {
+    top: 50%;
+    inset-inline-end: 44%;
+    translate: 0 -50%;
+  }
+
+  .tagline {
+    max-width: 28rem;
+    font-size: clamp(1.6rem, 2.7cqw, 2.4rem);
+  }
+
+  .desc {
+    max-width: 30rem;
+    font-size: var(--text-fluid-base);
+  }
+
+  .phone {
+    --pw: min(28cqw, calc(var(--h) * 0.44));
+
+    bottom: -8%;
+    inset-inline-end: 9%;
+  }
+}
+
+/* ------------------------------------------------------------ small screens */
+
+/* A finger swipes the row; the bar under it shows there is more. */
+@media (max-width: 39.99rem) {
+  .arrows {
+    display: none;
+  }
+}

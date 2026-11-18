@@ -1,0 +1,356 @@
+/*
+ * The Start a project form on the brand green: white type, fields drawn as
+ * white lines, a white send button, and the service list as a white card.
+ * Every text colour here keeps at least 4.5:1 on the green.
+ */
+
+/* ------------------------------------------------------------ fields -- */
+
+.optional {
+  margin-inline-start: 0.35rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgb(255 255 255 / 0.74);
+}
+
+/* The line under a field for its problem, kept even when empty. */
+.errorSlot {
+  display: block;
+  min-height: 1.6rem;
+  padding-top: 0.4rem;
+}
+
+/* Red would sink into the green; the problem is a pale rose with a warm icon instead. */
+.error,
+.sendError {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: #ffe0da;
+}
+
+.errorIcon {
+  flex: none;
+  margin-top: 0.1rem;
+  color: #ffb3a7;
+}
+
+/* ------------------------------------------------- the service picker -- */
+
+.select {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  height: 3.5rem;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.42);
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 1.125rem;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trigger:hover {
+  border-bottom-color: rgb(255 255 255 / 0.7);
+}
+
+.trigger:focus-visible,
+.select[data-open] .trigger {
+  outline: none;
+  border-bottom-color: #fff;
+  box-shadow: 0 1px 0 0 #fff;
+}
+
+.select[data-invalid] .trigger {
+  border-bottom-color: #ffb3a7;
+}
+
+.value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.value svg {
+  flex: none;
+  color: #9af5cb;
+}
+
+.placeholder {
+  color: rgb(255 255 255 / 0.6);
+}
+
+.chevron {
+  flex: none;
+  color: rgb(255 255 255 / 0.8);
+  transition: rotate 0.25s ease;
+}
+
+.select[data-open] .chevron {
+  rotate: 180deg;
+}
+
+.list {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 40;
+  max-height: min(21rem, 60vh);
+  overflow-y: auto;
+  padding: 0.4rem;
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 30px 70px -22px rgb(2 30 16 / 0.6), 0 2px 8px rgb(0 0 0 / 0.08);
+  overscroll-behavior: contain;
+  transform-origin: top center;
+}
+
+.list[data-up] {
+  top: auto;
+  bottom: calc(100% + 0.5rem);
+  transform-origin: bottom center;
+}
+
+.group {
+  padding: 0.7rem 0.75rem 0.3rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+html[lang="ar"] .group {
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.option svg {
+  flex: none;
+  color: var(--color-muted);
+}
+
+.option[data-active] {
+  background: #eef5f0;
+}
+
+.option[aria-selected="true"],
+.option[aria-selected="true"] svg {
+  font-weight: 600;
+  color: var(--color-mint);
+}
+
+.tick {
+  margin-inline-start: auto;
+}
+
+/* ------------------------------------------------------------- send -- */
+
+/* The site's call to action: the header's bevel (top-end and bottom-start corners cut), white on the green. */
+.send {
+  --b: 12px;
+  --bevel: polygon(0 0, calc(100% - var(--b)) 0, 100% var(--b), 100% 100%, var(--b) 100%, 0 calc(100% - var(--b)));
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 3.375rem;
+  padding: 0 1.75rem;
+  clip-path: var(--bevel);
+  background: #fff;
+  color: #064f2f;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.send::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: var(--bevel);
+  background: #fff;
+  transition: background-color 0.2s ease, inset 0.15s ease;
+}
+
+.send > * {
+  position: relative;
+}
+
+.send:hover::before {
+  background: #dcf6e8;
+}
+
+/* Focus: a mint ring inside the bevel. */
+.send:focus-visible {
+  outline: none;
+  background: #9af5cb;
+}
+
+.send:focus-visible::before {
+  inset: 3px;
+}
+
+.send:disabled {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+[dir="rtl"] .send {
+  --bevel: polygon(var(--b) 0, 100% 0, 100% calc(100% - var(--b)), calc(100% - var(--b)) 100%, 0 100%, 0 var(--b));
+}
+
+.sendArrow {
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.send:hover .sendArrow {
+  transform: translate(2px, -2px);
+}
+
+[dir="rtl"] .sendArrow {
+  scale: -1 1;
+}
+
+[dir="rtl"] .send:hover .sendArrow {
+  transform: translate(-2px, -2px);
+}
+
+.consent {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.78);
+}
+
+.consent a {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgb(154 245 203 / 0.7);
+  text-underline-offset: 3px;
+}
+
+.consent a:focus-visible,
+.emailUs a:focus-visible,
+.again:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.sendError {
+  font-size: 0.9375rem;
+}
+
+/* ------------------------------------------------------- email us -- */
+
+.emailUs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.9375rem;
+  color: rgb(255 255 255 / 0.8);
+}
+
+.emailUs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgb(154 245 203 / 0.55);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.emailUs a svg {
+  color: #9af5cb;
+}
+
+.emailUs a:hover {
+  text-decoration-color: #fff;
+}
+
+/* -------------------------------------------------------- thank you -- */
+
+.done {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  padding-block: 1rem;
+}
+
+.doneMark {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.14);
+  color: #9af5cb;
+}
+
+.doneTitle {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.doneText {
+  max-width: 30rem;
+  font-size: var(--text-fluid-base);
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.84);
+}
+
+.again {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgb(154 245 203 / 0.7);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+html[lang="ar"] .doneTitle {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  letter-spacing: 0;
+}

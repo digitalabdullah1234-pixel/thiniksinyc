@@ -1,0 +1,456 @@
+/*
+ * Our work: a white section whose body is a pinned split screen.
+ *
+ * The track is n screens tall and the stage sticks inside it for the whole
+ * run. On the stage, a framed window and a text column stand side by side on
+ * the page's grid; behind each is a strip of n panels. Motion moves the
+ * picture strip up and the story strip down by the same amount (see
+ * Projects.tsx), so nothing here transitions on its own.
+ */
+
+.section {
+  position: relative;
+  background: #ffffff;
+  color: var(--color-ink);
+}
+
+/*
+ * The stage brings its own room at the top (to clear the header once it is
+ * pinned). Less than a section's usual room above the heading: Services ends
+ * by fading into this white, and the pale end of that fade is room already.
+ */
+.head {
+  padding-top: clamp(2.75rem, 4.4vw, 4.75rem);
+}
+
+.track {
+  position: relative;
+  height: calc(var(--n) * 100vh);
+  height: calc(var(--n) * 100svh);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/*
+ * The stage's contents, on the page's own grid (it is also a `.shell`): the
+ * pictures' frame starts where the heading above starts, the stories end
+ * where the page's content ends, and the rail stands between the two. Clear
+ * of the header above, with a little air below.
+ */
+.inner {
+  --top: clamp(5rem, 10vh, 6.5rem);
+  --foot: clamp(1.25rem, 4vh, 2.75rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) auto minmax(0, 1fr);
+  column-gap: clamp(1.75rem, 3.6vw, 4rem);
+  height: 100%;
+  padding-block: var(--top) var(--foot);
+}
+
+.pictures,
+.stories {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* A framed window, not a slab against the screen's edge: the pictures travel behind it. */
+.pictures {
+  border-radius: clamp(1rem, 1.6vw, 1.5rem);
+  background: var(--color-abyss);
+  box-shadow: 0 1.5rem 3.25rem -1.75rem rgb(6 18 13 / 0.5);
+  /* Keeps the rounded corners while the strip inside moves on a layer of its own. */
+  isolation: isolate;
+}
+
+/* A story leaving the stage fades at the column's ends instead of being cut by them. */
+.stories {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 13%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 13%, #000 87%, transparent 100%);
+}
+
+/* n panels, each the height of the stage. */
+.strip {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(var(--n) * 100%);
+  will-change: transform;
+}
+
+/* The stories stack bottom-up, so the first project starts at the bottom of
+   the strip and the strip sinks to bring the next one down. */
+.sink {
+  flex-direction: column-reverse;
+}
+
+/* ---------------------------------------------------------------- pictures */
+
+.shot {
+  position: relative;
+  flex: 1 1 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+}
+
+.media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Pictures away from the middle sit a little darker. */
+.shade {
+  position: absolute;
+  inset: 0;
+  background: var(--color-abyss);
+  pointer-events: none;
+}
+
+.shot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgb(3 14 9 / 0.6), transparent 38%);
+  pointer-events: none;
+}
+
+
+.pause {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(0.85rem, 1.8vw, 1.35rem);
+  inset-inline-end: clamp(0.85rem, 1.8vw, 1.35rem);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  background: rgb(6 18 13 / 0.55);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.pause:focus-visible {
+  outline: 2px solid var(--color-night-mint);
+  outline-offset: 3px;
+}
+
+/* ----------------------------------------------------------------- stories */
+
+.story {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-height: 0;
+  padding-block: 1.5rem;
+}
+
+/* A big outlined number that fills with green while its story is the one in the middle. */
+.number {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: clamp(4.25rem, 2.8rem + 5vw, 8.75rem);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  -webkit-text-stroke: 1.5px var(--color-emerald);
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  font-size: var(--text-fluid-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mint);
+}
+
+.category i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-emerald);
+}
+
+html[lang="ar"] .category {
+  letter-spacing: 0;
+  font-size: var(--text-fluid-sm);
+}
+
+.name {
+  max-width: 16ch;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: clamp(1.75rem, 1rem + 2.1vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+html[lang="ar"] .name {
+  max-width: none;
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.description {
+  max-width: 32rem;
+  font-size: var(--text-fluid-lg);
+  line-height: 1.6;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: var(--text-fluid-xs);
+  font-weight: 600;
+  color: var(--color-mint);
+  background: #e6f4ec;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+  font-size: var(--text-fluid-sm);
+  font-weight: 600;
+  color: var(--color-mint);
+  text-decoration: none;
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--color-emerald);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* -------------------------------------------------------------------- seam */
+
+/* The rail between the frame and the stories, as tall as the frame. */
+.seam {
+  position: relative;
+  z-index: 4;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--color-hairline);
+  pointer-events: none;
+}
+
+.seam i {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-emerald);
+  transform-origin: 50% 0;
+  transform: scaleY(var(--p, 0));
+}
+
+.seam b {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  padding: 0.5rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #ffffff;
+  background: var(--color-abyss);
+  box-shadow: 0 0 0 4px #ffffff;
+}
+
+.seam b span {
+  color: var(--color-night-mint);
+}
+
+/* ------------------------------------------------------------- empty state */
+
+.empty {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  max-width: 36rem;
+  padding-bottom: var(--spacing-section);
+}
+
+.emptyTitle {
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: var(--text-fluid-h3);
+  font-weight: 700;
+}
+
+.emptyText {
+  color: var(--color-muted);
+}
+
+/* ------------------------------------------------------------------ phones */
+
+/* Upright phones and narrow tablets: the frame above, the stories below, and
+   the rail runs across between them. */
+@media (max-width: 54rem) and (orientation: portrait) {
+  .inner {
+    --top: 4.9rem;
+    --foot: 0.5rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 52fr) auto minmax(0, 48fr);
+    row-gap: 1.15rem;
+  }
+
+  .seam {
+    width: auto;
+    height: 2px;
+  }
+
+  .seam i {
+    transform-origin: 0 50%;
+    transform: scaleX(var(--p, 0));
+  }
+
+  html[dir="rtl"] .seam i {
+    transform-origin: 100% 50%;
+  }
+
+  .stories {
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  }
+
+  .story {
+    gap: 0.55rem;
+    padding-block: 1rem 0.75rem;
+  }
+
+  .number {
+    font-size: 3.4rem;
+  }
+
+  .category {
+    margin-top: 0.2rem;
+  }
+
+  .name {
+    max-width: none;
+    font-size: clamp(1.45rem, 1rem + 2.2vw, 2rem);
+  }
+
+  .description {
+    font-size: var(--text-fluid-sm);
+  }
+
+  .tags {
+    display: none;
+  }
+}
+
+/* Upright tablets: the stories need less of the height than on a phone, so the frame takes more. */
+@media (min-width: 40rem) and (max-width: 54rem) and (orientation: portrait) {
+  .inner {
+    grid-template-rows: minmax(0, 62fr) auto minmax(0, 38fr);
+  }
+}
+
+/* Short screens (a phone on its side, a small laptop window): keep the
+   split, drop what does not fit. */
+@media (max-height: 34rem) {
+  .inner {
+    --top: 4.5rem;
+    --foot: 0.75rem;
+  }
+
+  .story {
+    gap: 0.45rem;
+    padding-block: 0.75rem;
+  }
+
+  .number,
+  .tags {
+    display: none;
+  }
+
+  .name {
+    font-size: clamp(1.3rem, 0.9rem + 1.6vw, 1.9rem);
+  }
+
+  .description {
+    font-size: var(--text-fluid-sm);
+    line-height: 1.5;
+  }
+}
+
+/* ---------------------------------------------------------- reduced motion */
+
+/* Only while the site honours the setting (src/lib/motion-preference.ts): no
+   pin and no travel; each picture sits beside its story in a plain grid. */
+:root[data-motion="reduce"] .track {
+  height: auto;
+}
+
+:root[data-motion="reduce"] .stage {
+  position: relative;
+  height: auto;
+}
+
+:root[data-motion="reduce"] .inner {
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  grid-auto-rows: minmax(24rem, auto);
+  row-gap: 1.5rem;
+  height: auto;
+}
+
+:root[data-motion="reduce"] .pictures,
+:root[data-motion="reduce"] .stories,
+:root[data-motion="reduce"] .strip {
+  display: contents;
+}
+
+:root[data-motion="reduce"] .shot {
+  grid-column: 1;
+  border-radius: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+:root[data-motion="reduce"] .story {
+  grid-column: 2;
+  opacity: 1 !important;
+}
+
+:root[data-motion="reduce"] .seam {
+  display: none;
+}

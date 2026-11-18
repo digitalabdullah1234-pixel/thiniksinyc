@@ -1,0 +1,133 @@
+/*
+ * The logo band: a paper strip under the dark hero. Two rows drift in
+ * opposite directions, the clients and partners above the brands, every logo
+ * in its own colours. Each row fades out at both ends, so logos slide in
+ * and out rather than being cut.
+ */
+
+.band {
+  display: grid;
+  gap: 0.5rem;
+  padding-block: 1rem 1.05rem;
+  padding-inline-start: var(--spacing-gutter);
+  /* On top of the hero's mist and Services' fade, which both end in this paper. */
+  position: relative;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  min-width: 0;
+}
+
+/* The clients' row is the taller one; a hairline sets it apart from the brands. */
+.line[data-kind="clients"] {
+  padding-block-end: 0.55rem;
+  border-block-end: 1px solid rgb(22 33 28 / 0.08);
+}
+
+.label {
+  flex: none;
+  width: 7rem;
+  /* Both rows' labels in the same ink (the owner, 2026-11-16: one dark, one light looked wrong). */
+  color: var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+:global(html[lang="ar"]) .label {
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.view {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.track {
+  display: flex;
+  width: max-content;
+}
+
+/*
+ * A group is never narrower than the window, so the two copies always cover
+ * the row however few logos there are; a short list spreads out to fill it.
+ */
+.group {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 2.9rem;
+  min-width: 100vw;
+  padding-inline-end: 2.9rem;
+}
+
+.brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.375rem 0.25rem;
+}
+
+.brand svg,
+.picture {
+  flex: none;
+  display: block;
+}
+
+/* A logo kept as a white shape: the picture is the mask, its tint the colour. */
+.tinted {
+  flex: none;
+  display: block;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.name {
+  color: #2c3530;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Phones: each label sits above its row, small, and the logos come down a size. */
+@media (max-width: 40rem) {
+  .band {
+    padding-inline-start: 0;
+  }
+
+  .line {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+  }
+
+  .label {
+    width: auto;
+    padding-inline: var(--spacing-gutter);
+    font-size: 0.62rem;
+  }
+
+  :global(html[lang="ar"]) .label {
+    font-size: 0.74rem;
+  }
+
+  .line[data-kind="clients"] .brand {
+    zoom: 0.82;
+  }
+}

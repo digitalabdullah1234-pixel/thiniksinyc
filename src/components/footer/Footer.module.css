@@ -1,0 +1,171 @@
+/*
+ * The footer: white, Swiss in spirit. One grid, hairlines for structure, the
+ * brand green only in the small squares and on hover. The email slides by
+ * between two hairlines; one ruled row under it.
+ */
+.footer {
+  --ink: #16211c;
+  --muted: #5b655f;
+  --line: #e6e4dc;
+
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  /* Room above the band is the footer's own padding: a child's margin would slip out through its top. */
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+  background: #ffffff;
+  color: var(--ink);
+  border-top: 1px solid var(--line);
+}
+
+/* Under Start a project the night's own fade into white already parts the two: no hairline there. */
+:global(main:has(> #contact:last-child)) + .footer {
+  border-top-color: transparent;
+}
+
+/* ---- the band ---- */
+
+.frame {
+  display: block;
+  border-block: 1px solid var(--line);
+}
+
+.band {
+  padding-block: clamp(1.4rem, 3vw, 2.6rem);
+  /* The letters fade out at both edges instead of being cut. */
+  mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: clamp(3.4rem, 1.6rem + 6.4vw, 8.75rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.mail {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/*
+ * Outlined: an opaque 2.4px stroke painted under a white fill, so only its
+ * outer half shows and the overlapping contours inside Inter's letters (the
+ * k, the @) stay hidden.
+ */
+.mail[data-outline] {
+  --stroke: #b9bfbb;
+  -webkit-text-stroke: 2.4px var(--stroke);
+  paint-order: stroke fill;
+}
+
+.mail:focus-visible {
+  outline: 2px solid #0b7c43;
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+/* The brand's green square between two emails, sat on the x-height. */
+.sq {
+  flex: none;
+  width: 0.13em;
+  height: 0.13em;
+  margin-inline: 0.42em;
+  margin-top: 0.12em;
+  background: #22c271;
+}
+
+/* ---- the ruled row ---- */
+
+.row {
+  display: grid;
+  gap: 1.1rem;
+  padding-block: clamp(1.6rem, 3vw, 2.4rem) clamp(1.8rem, 3.4vw, 2.6rem);
+}
+
+/* Phones: the three sit one under another, all on the centre line, so the © line is centred too. */
+.cell {
+  display: grid;
+  gap: 0.35rem;
+  align-content: end;
+  justify-items: center;
+  text-align: center;
+}
+
+.label {
+  font: 500 0.6875rem / 1.3 ui-monospace, "SF Mono", Consolas, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+:global(html[lang="ar"]) .label {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+}
+
+.city {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.value {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+a.value:hover {
+  color: var(--ink);
+}
+
+a.value:focus-visible {
+  outline: 2px solid #0b7c43;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.link {
+  position: relative;
+  display: inline-block;
+}
+
+.link > i {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.15em;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+}
+
+:global(html[dir="rtl"]) .link > i {
+  transform-origin: right;
+}
+
+@media (min-width: 48rem) {
+  .row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  .cell {
+    justify-items: start;
+    text-align: start;
+  }
+
+  /* The © line in the true middle of the page: the middle of three equal columns. */
+  .middle {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .end {
+    justify-items: end;
+  }
+}

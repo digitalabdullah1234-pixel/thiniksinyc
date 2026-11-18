@@ -1,0 +1,214 @@
+/*
+ * Why us: the headline and the reasons on the reading side; beside them two
+ * rings that slide into each other as the section scrolls in, the part they
+ * share filling green.
+ */
+
+.section {
+  position: relative;
+  background: #ffffff;
+  color: var(--color-ink);
+  /*
+   * Less room both ways: Process above ends by fading into this white and
+   * Start a project below begins by fading out of it, and the pale ends of
+   * those fades are room already.
+   */
+  padding-block: calc(var(--spacing-section) * 0.5);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  grid-template-areas:
+    "head art"
+    "list art";
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(2rem, 5vw, 5rem);
+  row-gap: clamp(2rem, 3.5vw, 3rem);
+}
+
+.head {
+  grid-area: head;
+}
+
+/* Held in the middle of the screen while the reasons scroll past beside it. */
+.art {
+  grid-area: art;
+  position: sticky;
+  top: max(6rem, calc(50vh - 11rem));
+  align-self: start;
+}
+
+/* The drawing and its names share this box, so the names sit by percentages of the drawing.
+   Clipped: a name's layer is as wide as the drawing and slides a little with its ring, and
+   on a phone that slid it past the screen's edge and let the whole page scroll sideways. */
+.stage {
+  position: relative;
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.ring {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.4;
+}
+
+.lens {
+  fill: var(--color-emerald);
+}
+
+/* A name's own layer, the size of the drawing: it is moved by a share of the drawing's width. */
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.name {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20%;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: clamp(0.72rem, 0.6rem + 0.45vw, 0.95rem);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+html[lang="ar"] .name {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: clamp(0.85rem, 0.7rem + 0.5vw, 1.1rem);
+}
+
+/* Centred on the part of each ring that stays its own, clear of the shared part. */
+.you {
+  inset-inline-start: 17.3%;
+}
+
+.us {
+  inset-inline-end: 17.3%;
+}
+
+/* The word where the rings meet: white on the green, in the middle of the drawing. */
+.core {
+  left: 40%;
+  /* A touch smaller than the names: the overlap is the narrowest place in the drawing. */
+  font-size: clamp(0.66rem, 0.54rem + 0.4vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+html[lang="ar"] .core {
+  font-size: clamp(0.8rem, 0.66rem + 0.45vw, 1rem);
+}
+
+.list {
+  grid-area: list;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-ink);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  padding-block: clamp(1.15rem, 2vw, 1.6rem);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.n {
+  padding-top: 0.3rem;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: var(--text-fluid-xs);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--color-mint);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-space), system-ui, sans-serif;
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* Space Grotesk has no Arabic, and tracking breaks a connected script. */
+html[lang="ar"] .title {
+  font-family: var(--font-arabic), system-ui, sans-serif;
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+
+.text {
+  margin: 0.45rem 0 0;
+  max-width: 36rem;
+  font-size: clamp(0.975rem, 0.94rem + 0.2vw, 1.0625rem);
+  line-height: 1.65;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+
+@media (max-width: 60rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "head"
+      "art"
+      "list";
+    grid-template-rows: auto;
+  }
+
+  .art {
+    position: relative;
+    top: auto;
+    max-width: 34rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+}
+
+/* Phones: the drawing runs a little past the text column on both sides, so the rings stay large. */
+@media (max-width: 36rem) {
+  .stage {
+    width: 118%;
+    margin-inline: -9%;
+  }
+
+  .name {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  .core {
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+
+  html[lang="ar"] .core {
+    font-size: 0.8rem;
+  }
+}
+
+/* Arabic: the number keeps its left-to-right digits but sits on the reading edge (the right). */
+[dir="rtl"] .n {
+  text-align: right;
+}
